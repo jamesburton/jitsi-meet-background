@@ -4,20 +4,14 @@ import Jitsi from "react-jitsi";
 //import { types } from "mobx-state-tree";
 import styled from "@emotion/styled";
 import { Tab } from "semantic-ui-react";
-import cards, { Card, SUITS } from "react-playing-cards";
+//import cards, { Card, SUITS } from "react-playing-cards";
+//import "lib-jitsi-meet-dist/dist/external_api.min.js"; // NB: Don't use lib-jitsi-meet.min.js unless you want to implement the whole UI, external_api.min.js is the iframe version
+import { jitsiConfig, jitsiInterfaceConfig } from "./config/jitsi";
+import Draggable from "./Draggable";
 
 const Wrapper = styled.div`
-  font-family: sans-serif;
+  font-family: Roboto, Helvetica, sans-serif;
   text-align: center;
-
-  /*
-  & #react-jitsi-container: {
-    border: 1px solid red;
-  }
-  & #react-jitsi-frame: {
-    border: 1px solid blue;
-  }
-  */
 `;
 
 const WindowWrapper = styled.div(
@@ -34,6 +28,7 @@ const WindowWrapper = styled.div(
   `;
   }
 );
+
 const WindowContent = styled.div`
   width: 100%;
   height: 100%;
@@ -41,11 +36,13 @@ const WindowContent = styled.div`
   overflow-y: auto;
   background-color: rgba(240, 240, 240, 0.9);
 `;
+
 const WindowTitle = styled.h3`
   background-color: #66c;
   color: #dda;
   margin-top: 0;
 `;
+
 const Window = ({
   title,
   width = "400px",
@@ -53,17 +50,21 @@ const Window = ({
   top = 0,
   left = 0,
   children
-}) => (
-  <WindowWrapper top={top} left={left} width={width} height={height}>
-    <WindowContent>
-      {title && <WindowTitle>{title}</WindowTitle>}
-      <div>
-        {width} x {height}
-      </div>
-      {children}
-    </WindowContent>
-  </WindowWrapper>
-);
+}) => {
+  const dragRef=useRef();
+  Draggable(dragRef);
+  return (
+    <WindowWrapper ref={dragRef} top={top} left={left} width={width} height={height}>
+      <WindowContent>
+        {title && <WindowTitle>{title}</WindowTitle>}
+        <div>
+          {width} x {height}
+        </div>
+        {children}
+      </WindowContent>
+    </WindowWrapper>
+  );
+};
 
 const panes = [
   { menuItem: "Tab 1", render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
@@ -90,19 +91,6 @@ const jitsiContainerStyle = {
 const jitsiFrameStyle = {
   width: "100vw",
   height: "100vh"
-};
-
-// See https://github.com/jitsi/jitsi-meet/blob/master/config.js
-const jitsiConfig = {};
-// See https://github.com/jitsi/jitsi-meet/blob/master/interface_config.js
-const jitsiIntefaceConfig = {
-  SHOW_JITSI_WATERMARK: false,
-  //APP_NAME: 'Jitsi Meet',
-  APP_NAME: "Poker Friends",
-  //NATIVE_APP_NAME: 'Jitsi Meet',
-  NATIVE_APP_NAME: "Poker Friends",
-  //PROVIDER_NAME: 'Jitsi'
-  MOBILE_APP_PROMO: false
 };
 
 const Overlay = styled.div`
@@ -183,6 +171,8 @@ export default function App() {
         <Overlay>Does this get meta?</Overlay>
       </Overlay>
       <Jitsi
+        config={jitsiConfig}
+        interfaceConfig={jitsiInterfaceConfig}
         style={{ position: "absolute", top: 0, left: 0, bottom: 0, right: 0 }}
         roomName={roomName}
         displayName={displayName}

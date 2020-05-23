@@ -163,7 +163,19 @@ export default function App() {
           height="150px"
           title="Test"
         >
-          Test Window
+          <h3>Test Window</h3>
+          <div>
+              <CardSingle
+                id={`S_A`}
+                card={ {
+                    suit: `S`, 
+                    rank: `A`, 
+                    backColor: `#1A1919`,
+                    //color: item.suit === 'D' || item.suit === 'H' ? `#D33E43` : `#1A1919`
+                    color: `#1A1919`
+                } }
+            />
+          </div>
         </Window>
 
         <TabWindow top="25px" left="15%" height="30%" width="130px" />
